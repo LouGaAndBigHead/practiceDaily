@@ -1,8 +1,10 @@
 package redis001;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -141,4 +143,88 @@ public class RedisTest {
 	/**
 	 * redis基础过完，6666 rule the world step one
 	 */
+	
+	@Test
+	public void testString1(){
+		String string = "abedhdcdefge";//7
+		int length = string.length();
+		//char charAt = 0;
+		String str = "";
+		HashMap<Integer, String> hash = new HashMap<Integer, String>();
+		for(int i = 0;i <length;i++){
+			for(int sub = i+1;sub<=length;sub++){
+				str = string.substring(i,sub);
+				if (!str.matches(".*(.).*\\1.*")) {
+					hash.put(str.length(), str);
+					System.out.println(str);
+				}
+				//String reString = containRepeatChar(str);
+				//System.out.println(reString);
+				/*if (sub<length) {
+					charAt = string.charAt(sub);
+				}else{
+					System.out.println(str);
+					return;
+				}
+				if(str.contains(String.valueOf(charAt))){
+					System.out.println(str);
+					i = string.indexOf(String.valueOf(charAt));
+					break;
+				}*/
+				/*for(int stri = 0;stri<str.length();stri++){
+					if(!str.contains(str.substring(stri, stri+1)) && res<=str.length()){
+						res = str.length();
+						
+					}
+				}*/
+			}
+		}
+		//判断hash的value值
+		//List<Integer> set = (List<Integer>) hash.values();
+		int a = 0;
+		for (Integer integer : hash.keySet()) {
+			if (integer>a) {
+				a = integer;
+			}
+		}
+		System.out.println(a+"********");
+		System.out.println(hash.get(a));
+	}
+	
+    public static String containRepeatChar(String str){
+        if(str==null||str.isEmpty()){
+            return "";
+        }
+        char[] elements=str.toCharArray();    
+        for(char e:elements){
+            if(str.indexOf(e)!=str.lastIndexOf(e)){
+                return str;
+            }
+        }
+        return "";
+    }
+	
+	@Test
+	public void test(){
+		int k = lengthOfLongestSubstring("asdfgshj");
+		System.out.println(k);
+	}
+	    public int lengthOfLongestSubstring(String s) {
+	        int n = s.length();
+	        int ans = 0;
+	        for (int i = 0; i < n; i++)
+	            for (int j = i + 1; j <= n; j++)
+	                if (allUnique(s, i, j)) ans = Math.max(ans, j - i);
+	        return ans;
+	    }
+
+	    public boolean allUnique(String s, int start, int end) {
+	        Set<Character> set = new HashSet<>();
+	        for (int i = start; i < end; i++) {
+	            Character ch = s.charAt(i);
+	            if (set.contains(ch)) return false;
+	            set.add(ch);
+	        }
+	        return true;
+	    }
 }
