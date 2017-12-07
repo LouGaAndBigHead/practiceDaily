@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.ZParams;
 
 public class ArticleVote {
 	private Jedis jedis;
@@ -107,6 +108,44 @@ public class ArticleVote {
 	}
 
 	/**
-	 * 对文章进行分组 明天写完这个狗屁东西
+	 * 对文章进行分组 
+	 * 1.需要两个群组
+	 * 2.一个群组负责记录文章属于哪个群组，另一个负责取出群组里面的文章
+	 * 
 	 */
+	@Test
+	public void addGroups(String articleId,String[] toAdd){
+		String article = "article:" + articleId;
+		for(String group : toAdd){
+			jedis.sadd("group:" + group, article);
+		}
+	}
+
+	@Test
+	public List<Map<String, String>> getGroupArticles(String group,int page){
+		return getGroupArticels(group, page, "score:");
+	}
+	
+	public List<Map<String, String>> getGroupArticels(String group,int page,String order){
+		String key = order + group;
+		if(!jedis.exists(key)){
+			ZParams params = new ZParams().aggregate(ZParams.Aggregate.MAX);
+			jedis.zinterstore(key, params,"group:"+group);
+			jedis.expire(key, 60);
+		}
+		return getArticles(page, key);
+	}
+	
+	@Test
+	public void printArticles(List<Map<String, String>> articles){
+		for (Map<String, String> article : articles) {
+			System.out.println("  id: " + article.get("id"));
+			for (Map.Entry<String, String> entry : article.entrySet()) {
+				if(entry.getKey().equals("id")){
+					continue;
+				}
+				System.out.println("   " + entry.getKey() + ": " + entry.getValue());
+			}
+		}
+	}
 }
