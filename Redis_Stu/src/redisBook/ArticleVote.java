@@ -1,4 +1,4 @@
-package redisArticleVote;
+package redisBook;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,9 +14,9 @@ import redis.clients.jedis.ZParams;
 
 public class ArticleVote {
 	private Jedis jedis;
-	private static final int ONE_WEEK_IN_SECONDS = 7 * 86400; //Õ¹Ê¾Ò»ÖÜÐèÒªµÄ·ÖÊý
-	private static final int VOTE_SCORE = 432; //Í¶Æ±³£Á¿
-	private static final int ARTICLES_PER_PAGE = 25; //·ÖÒ³Õ¹Ê¾Ã¿Ò³Õ¹Ê¾µÄÒ³Êý
+	private static final int ONE_WEEK_IN_SECONDS = 7 * 86400; //Õ¹Ê¾Ò»ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä·ï¿½ï¿½ï¿½
+	private static final int VOTE_SCORE = 432; //Í¶Æ±ï¿½ï¿½ï¿½ï¿½
+	private static final int ARTICLES_PER_PAGE = 25; //ï¿½ï¿½Ò³Õ¹Ê¾Ã¿Ò³Õ¹Ê¾ï¿½ï¿½Ò³ï¿½ï¿½
 
 	@Before
 	public void setUp() throws Exception {
@@ -24,23 +24,23 @@ public class ArticleVote {
 	}
 
 	/**
-	 * ·¢²¼²¢»ñÈ¡ÎÄÕÂ   ·¢²¼ÎÄÕÂÐèÒª´«µÝ²ÎÊý£º×÷Õß ÎÄÕÂ±êÌâ Á´½Ó
-	 * 1.´æ´¢ÎÄÕÂÏà¹ØÐÅÏ¢
-	 * 2.½«×÷Õß´æµ½ÒÑÍ¶Æ±ÓÃ»§Ãûµ¥¼¯ºÏÖÐ
-	 * 3.½«·¢²¼Ê±¼äºÍ³õÊ¼ÆÀ·Ö·ÅÈëÓÐÐò¼¯ºÏ
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â±ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	 * 1.ï¿½æ´¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
+	 * 2.ï¿½ï¿½ï¿½ï¿½ï¿½ß´æµ½ï¿½ï¿½Í¶Æ±ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * 3.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Í³ï¿½Ê¼ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò¼¯ºï¿½
 	 * @return
 	 */
 	@Test
 	public String postArticle(String user,String title,String link) {
-		//Éú³ÉÒ»¸öÐÂµÄÎÄÕÂID
+		//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½ID
 		String articleId = String.valueOf(jedis.incr("article:"));
 		
-		//½«×÷Õß¼Óµ½ÒÑÍ¶Æ±ÓÃ»§Ãû¼¯ºÏÖÐ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ß¼Óµï¿½ï¿½ï¿½Í¶Æ±ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		String voted = "voted:" + articleId;
 		jedis.sadd(voted, user);
-		jedis.expire(voted, ONE_WEEK_IN_SECONDS);//ÉèÖÃÓÐÐ§Ê±¼ä
+		jedis.expire(voted, ONE_WEEK_IN_SECONDS);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§Ê±ï¿½ï¿½
 		
-		long now = System.currentTimeMillis() / 1000;//»ñÈ¡UnixÊ±¼ä
+		long now = System.currentTimeMillis() / 1000;//ï¿½ï¿½È¡UnixÊ±ï¿½ï¿½
 		String article = "article:" + articleId;
 		HashMap<String, String> articleData = new HashMap<String,String>();
 		articleData.put("title", title);
@@ -48,7 +48,7 @@ public class ArticleVote {
 		articleData.put("user", user);
 		articleData.put("now", String.valueOf(now));
 		articleData.put("vates", "1");
-		jedis.hmset(article, articleData); //½«ÎÄÕÂÐÅÏ¢´æµ½hash±íÖÐ
+		jedis.hmset(article, articleData); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½æµ½hashï¿½ï¿½ï¿½ï¿½
 		jedis.zadd("score", now + VOTE_SCORE,article);
 		jedis.zadd("time:", now,article);
 		
@@ -56,48 +56,48 @@ public class ArticleVote {
 	}
 	
 	/**
-	 * ÎÄÕÂÍ¶Æ± ËùÐè²ÎÊý  ÓÃ»§Ãû  ÎÄÕÂ
-	 * 1.½«Æ±Êý¼Óµ½vote¼¯ºÏ
-	 * 2.½«ÓÃ»§id¼Óµ½ÒÑÍ¶Æ±ÓÃ»§¼¯ºÏ
+	 * ï¿½ï¿½ï¿½ï¿½Í¶Æ± ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½Ã»ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½
+	 * 1.ï¿½ï¿½Æ±ï¿½ï¿½ï¿½Óµï¿½voteï¿½ï¿½ï¿½ï¿½
+	 * 2.ï¿½ï¿½ï¿½Ã»ï¿½idï¿½Óµï¿½ï¿½ï¿½Í¶Æ±ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 */
 	@Test
 	public void articleVote(String user,String article){
-		//ÅÐ¶ÏÎÄÕÂÓÐÃ»ÓÐ¹ýÆÚ
+		//ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ð¹ï¿½ï¿½ï¿½
 		long cutoff = (System.currentTimeMillis() / 1000) - ONE_WEEK_IN_SECONDS;
-		if(jedis.zscore("time:", article) < cutoff){//Èç¹ûÊ±¼ä´óÓÚÓÐÐ§Ê±¼ä
+		if(jedis.zscore("time:", article) < cutoff){//ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§Ê±ï¿½ï¿½
 			return;
 		}
-		String articleId = article.substring(article.indexOf(":")+1);//´Ó£ºÏÂÒ»Î»¿ªÊ¼½ØÈ¡×Ö·û´®£¬Ò»Ö±½ØÈ¡µ½×îºó
+		String articleId = article.substring(article.indexOf(":")+1);//ï¿½Ó£ï¿½ï¿½ï¿½Ò»Î»ï¿½ï¿½Ê¼ï¿½ï¿½È¡ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½Ò»Ö±ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(jedis.sadd("vated:" + articleId, user) == 1){
-			//Redis Zincrby ÃüÁî¶ÔÓÐÐò¼¯ºÏÖÐÖ¸¶¨³ÉÔ±µÄ·ÖÊý¼ÓÉÏÔöÁ¿ increment
+			//Redis Zincrby ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ò¼¯ºï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ô±ï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ increment
 			jedis.zincrby("score:", VOTE_SCORE, article);
-			//Redis Hincrby ÃüÁîÓÃÓÚÎª¹þÏ£±íÖÐµÄ×Ö¶ÎÖµ¼ÓÉÏÖ¸¶¨ÔöÁ¿Öµ¡£
+			//Redis Hincrby ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Ï£ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ö¶ï¿½Öµï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½
 			jedis.hincrBy(article, "votes", 1);
 
 		}
 	}
 	
 	/**
-	 * ÎÄÕÂÅÅÐò
-	 * 1.Redis Zrevrange ÃüÁî·µ»ØÓÐÐò¼¯ÖÐ£¬Ö¸¶¨Çø¼äÄÚµÄ³ÉÔ±£¬
-		  ÆäÖÐ³ÉÔ±µÄÎ»ÖÃ°´·ÖÊýÖµµÝ¼õ(´Ó´óµ½Ð¡)À´ÅÅÁÐ¡£
-	   2.Redis Hgetall ÃüÁîÓÃÓÚ·µ»Ø¹þÏ£±íÖÐ£¬ËùÓÐµÄ×Ö¶ÎºÍÖµ¡£
-		  ÔÚ·µ»ØÖµÀï£¬½ô¸úÃ¿¸ö×Ö¶ÎÃû(field name)Ö®ºóÊÇ×Ö¶ÎµÄÖµ(value)£¬
-		  ËùÒÔ·µ»ØÖµµÄ³¤¶ÈÊÇ¹þÏ£±í´óÐ¡µÄÁ½±¶¡£
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * 1.Redis Zrevrange ï¿½ï¿½ï¿½î·µï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÚµÄ³ï¿½Ô±ï¿½ï¿½
+		  ï¿½ï¿½ï¿½Ð³ï¿½Ô±ï¿½ï¿½Î»ï¿½Ã°ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Ý¼ï¿½(ï¿½Ó´ï¿½Ð¡)ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½
+	   2.Redis Hgetall ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½ï¿½Ø¹ï¿½Ï£ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½Ö¶Îºï¿½Öµï¿½ï¿½
+		  ï¿½Ú·ï¿½ï¿½ï¿½Öµï¿½ï£¬ï¿½ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½(field name)Ö®ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶Îµï¿½Öµ(value)ï¿½ï¿½
+		  ï¿½ï¿½ï¿½Ô·ï¿½ï¿½ï¿½Öµï¿½Ä³ï¿½ï¿½ï¿½ï¿½Ç¹ï¿½Ï£ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	@Test
 	public List<Map<String,String>> getArticles(int page,String order){
-		//ÉèÖÃÆðÖ¹Ò³
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹Ò³
 		int start = (page - 1) * ARTICLES_PER_PAGE;
 		int end = start + ARTICLES_PER_PAGE - 1;
 		
-		//ÓÐÐò·µ»Ø  Ö¸¶¨  ¼¯ºÏµÄ³ÉÔ±
-		Set<String> ids = jedis.zrevrange(order, start, end);//¸Ã·½·¨¸Ð¾õºÜºÃÓÃ°¡
+		//ï¿½ï¿½ï¿½ò·µ»ï¿½  Ö¸ï¿½ï¿½  ï¿½ï¿½ï¿½ÏµÄ³ï¿½Ô±
+		Set<String> ids = jedis.zrevrange(order, start, end);//ï¿½Ã·ï¿½ï¿½ï¿½ï¿½Ð¾ï¿½ï¿½Üºï¿½ï¿½Ã°ï¿½
 		List<Map<String,String>> articles = new ArrayList<Map<String, String>>();
 		for (String id : ids) {
-			Map<String, String> articleData = jedis.hgetAll(id);//È¡µ½Ã¿¸öÎÄÕÂµÄÐÅÏ¢
-			articleData.put("id", id);//¸øÃ¿¸öÎÄÕÂ¼ÓidÊôÐÔ
+			Map<String, String> articleData = jedis.hgetAll(id);//È¡ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½Ï¢
+			articleData.put("id", id);//ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½idï¿½ï¿½ï¿½ï¿½
 			articles.add(articleData);
 		}
 		return articles;
@@ -108,9 +108,9 @@ public class ArticleVote {
 	}
 
 	/**
-	 * ¶ÔÎÄÕÂ½øÐÐ·Ö×é 
-	 * 1.ÐèÒªÁ½¸öÈº×é
-	 * 2.Ò»¸öÈº×é¸ºÔð¼ÇÂ¼ÎÄÕÂÊôÓÚÄÄ¸öÈº×é£¬ÁíÒ»¸ö¸ºÔðÈ¡³öÈº×éÀïÃæµÄÎÄÕÂ
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ð·ï¿½ï¿½ï¿½ 
+	 * 1.ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Èºï¿½ï¿½
+	 * 2.Ò»ï¿½ï¿½Èºï¿½é¸ºï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¸ï¿½Èºï¿½é£¬ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½Èºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 */
 	@Test
